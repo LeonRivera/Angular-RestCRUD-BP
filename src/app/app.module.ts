@@ -7,8 +7,10 @@ import { TableModelsComponent } from './table-models/table-models.component';
 import { FormModelsComponent } from './form-models/form-models.component';
 import { PrimeNgComponentsModule } from './modules/prime-ng-components/prime-ng-components.module';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { DialogService } from 'primeng/dynamicdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 
 @NgModule({
@@ -23,9 +25,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     PrimeNgComponentsModule,
     HttpClientModule,
     FormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
   ],
-  providers: [],
+  providers: [DialogService, MessageService, ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

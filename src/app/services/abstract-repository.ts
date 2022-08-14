@@ -2,25 +2,32 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, Observable, throwError } from 'rxjs';
+import { AppConstants } from '../utils/app-constants';
 
 export abstract class AbstractRepository<T> {
 
     
 //   private httpHeaders = new HttpHeaders({'Content-type':'application/json'});
-  private devBaseUrl: string = "";
-  private prodBaseUrl: string = "";
-    
+  private baseUrl: string = "";
+
+  
   constructor(protected httpClient: HttpClient,protected router: Router,protected modelUrl: string){
-    this.devBaseUrl = `http://localhost:8080/api/v1/${modelUrl}`
+
+    if(AppConstants.ENV === AppConstants.ENV_DEV){
+      this.baseUrl = AppConstants.BASE_URL_DEV + `/${modelUrl}`;
+    }else{
+      this.baseUrl = AppConstants.BASE_URL_PROD + `/${modelUrl}`;
+    }
+
   } 
 
   findAll():Observable<any>{
-    return this.httpClient.get<T>(this.devBaseUrl)
+    return this.httpClient.get<T>(this.baseUrl)
   }
 
   findById(id:number):Observable<any>{  
-    console.log(`${this.devBaseUrl}/${id}`);
-    return this.httpClient.get<T>(`${this.devBaseUrl}/${id}`)
+    console.log(`${this.baseUrl}/${id}`);
+    return this.httpClient.get<T>(`${this.baseUrl}/${id}`)
     .pipe(
       catchError(e => {
         return throwError(e);
@@ -29,7 +36,7 @@ export abstract class AbstractRepository<T> {
   }
 
   save(type:T):Observable<any>{  
-    return this.httpClient.post<T>(this.devBaseUrl, type)
+    return this.httpClient.post<T>(this.baseUrl, type)
     .pipe(
       catchError(e => {
         return throwError(e);
@@ -38,7 +45,7 @@ export abstract class AbstractRepository<T> {
   }
 
   update(type:T):Observable<any>{  
-    return this.httpClient.put<T>(this.devBaseUrl, type)
+    return this.httpClient.put<T>(this.baseUrl, type)
     .pipe(
       catchError(e => {
         return throwError(e);
@@ -47,7 +54,7 @@ export abstract class AbstractRepository<T> {
   }
 
   deleteByType(type:T):Observable<any>{  
-    return this.httpClient.request<any>('delete', this.devBaseUrl, {body: type})
+    return this.httpClient.request<any>('delete', this.baseUrl, {body: type})
     .pipe(
       catchError(e => {
         return throwError(e);
@@ -56,8 +63,8 @@ export abstract class AbstractRepository<T> {
   }
 
   deleteById(id:number):Observable<any>{  
-    console.log("Eliminando desde abstract repository con " + this.devBaseUrl);
-    return this.httpClient.delete<T>(`${this.devBaseUrl}/${id}`)
+    console.log("Eliminando desde abstract repository con " + this.baseUrl);
+    return this.httpClient.delete<T>(`${this.baseUrl}/${id}`)
     .pipe(
       catchError(e => {
         console.log("Ocurrio un error al eliminar un" + this.modelUrl);
