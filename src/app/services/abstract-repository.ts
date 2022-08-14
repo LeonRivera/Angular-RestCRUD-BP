@@ -3,12 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, Observable, throwError } from 'rxjs';
 import { AppConstants } from '../utils/app-constants';
+import { OperationUtils } from '../utils/operation-utils';
 
 export abstract class AbstractRepository<T> {
 
     
 //   private httpHeaders = new HttpHeaders({'Content-type':'application/json'});
   private baseUrl: string = "";
+  private operationUtils:OperationUtils = new OperationUtils();
 
   
   constructor(protected httpClient: HttpClient,protected router: Router,protected modelUrl: string){
@@ -30,6 +32,18 @@ export abstract class AbstractRepository<T> {
     return this.httpClient.get<T>(`${this.baseUrl}/${id}`)
     .pipe(
       catchError(e => {
+        this.operationUtils.throwErrorMessageServicePrimeNg(e);
+        return throwError(e);
+      })
+    )
+  }
+
+  
+  findByParam(param:any, paramOfSearch:string):Observable<T>{
+    return this.httpClient.get<T>(`${this.baseUrl}/${paramOfSearch}/${param}`)
+    .pipe(
+      catchError(e => {
+        this.operationUtils.throwErrorMessageServicePrimeNg(e);
         return throwError(e);
       })
     )
@@ -39,6 +53,7 @@ export abstract class AbstractRepository<T> {
     return this.httpClient.post<T>(this.baseUrl, type)
     .pipe(
       catchError(e => {
+        this.operationUtils.throwErrorMessageServicePrimeNg(e);
         return throwError(e);
       })
     )
@@ -48,6 +63,7 @@ export abstract class AbstractRepository<T> {
     return this.httpClient.put<T>(this.baseUrl, type)
     .pipe(
       catchError(e => {
+        this.operationUtils.throwErrorMessageServicePrimeNg(e);
         return throwError(e);
       })
     )
@@ -57,6 +73,7 @@ export abstract class AbstractRepository<T> {
     return this.httpClient.request<any>('delete', this.baseUrl, {body: type})
     .pipe(
       catchError(e => {
+        this.operationUtils.throwErrorMessageServicePrimeNg(e);
         return throwError(e);
       })
     )
@@ -67,6 +84,7 @@ export abstract class AbstractRepository<T> {
     return this.httpClient.delete<T>(`${this.baseUrl}/${id}`)
     .pipe(
       catchError(e => {
+        this.operationUtils.throwErrorMessageServicePrimeNg(e);
         console.log("Ocurrio un error al eliminar un" + this.modelUrl);
         return throwError(e);
       })
