@@ -1,6 +1,6 @@
 export class AppConstants {
 
-    
+    // Actual environment of the app
     static ENV:string = "DEV";
 
 
